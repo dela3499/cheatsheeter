@@ -150,14 +150,14 @@
 	function viewListTitle(sheetIndex, listIndex, text) {
 		var update = function (input) { updateListTitle(sheetIndex, listIndex,input.target.value) }
 		return m('div', {class: "title"}, 
-				m('input', {value: text, oninput: update, placeholder: "_________________"})
+				m('input', {value: text, oninput: update, placeholder: "___________________"})
 			)
 	}
 
 	function viewSheetTitle(sheetIndex, text) {
 		var update = function (input) { updateSheetTitle(sheetIndex, input.target.value) }
 		return m('div', {class: "sheet-title"}, 
-				m('input', {value: text, oninput: update, placeholder: "_________________"})
+				m('input', {value: text, oninput: update, placeholder: "sheet title here"})
 			)
 	}	
 
@@ -196,15 +196,25 @@
 		// kind of hacky to use map3 here and pass sheetIndex as list
 		return m("div", {class: "sheet"}, [
 				viewSheetTitle(sheetIndex, sheet['title']),
-				m('div', {class: "column"}, map3(viewList, [sheetIndex, sheetIndex, sheetIndex], [0,1,2], sheet['lists'].slice(0,3))),
-				m('div', {class: "column"}, map3(viewList, [sheetIndex, sheetIndex, sheetIndex], [3,4,5], sheet['lists'].slice(3,6)))
+				m('div', {class: "column column1"}, map3(viewList, [sheetIndex, sheetIndex, sheetIndex], [0,1,2], sheet['lists'].slice(0,3))),
+				m('div', {class: "column column2"}, map3(viewList, [sheetIndex, sheetIndex, sheetIndex], [3,4,5], sheet['lists'].slice(3,6)))
 				]
 			)
 	}
 
 	function viewTab(sheetIndex, text) {
+
+		if (text == "") {
+			text = "_"
+		}
+
+		var model = JSON.parse(localStorage.getItem('cheatsheeter'))
+		var classes = "tab"
+		if(model['currentSheetIndex'] == sheetIndex) {
+			classes = classes + " active"
+		}
 		var update = function () { setActiveSheet(sheetIndex) }
-		return m('div', {class: "tab", onclick: update}, text)
+		return m('div', {class: classes, onclick: update}, text)
 	}	
 
 	function viewTabs(titles) {
