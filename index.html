@@ -27,7 +27,10 @@
 
 	// Initialize localStorage
 
-	var initModel = []
+	var initModel ={
+		"currentSheetIndex": 0,
+		"sheets": []
+	}
 
 	for (i = 0; i < 5; i++) { 
 		var blankLists = []
@@ -39,13 +42,13 @@
 			}
 		}
 
-		initModel[i] = {
+		initModel['sheets'][i] = {
 			"title": "Sheet #" + (i + 1).toString(),
 			"lists": blankLists
  	   	}
 	}
 
-	initModel[0] = {
+	initModel['sheets'][0] = {
 		"title": "Welcome!",
 		"lists": 
 			[
@@ -111,20 +114,20 @@
 
 	function updateSheetTitle(sheetIndex, newTitle) {
 		var model = JSON.parse(localStorage.getItem('cheatsheeter'));
-		model[sheetIndex]['title'] = newTitle;
+		model['sheets'][sheetIndex]['title'] = newTitle;
 		localStorage.setItem('cheatsheeter', JSON.stringify(model));
 		render();
 	}
 
 	function updateListTitle(sheetIndex, listIndex, newTitle) {
 		var model = JSON.parse(localStorage.getItem('cheatsheeter'));
-		model[sheetIndex]['lists'][listIndex]['title'] = newTitle;
+		model['sheets'][sheetIndex]['lists'][listIndex]['title'] = newTitle;
 		localStorage.setItem('cheatsheeter', JSON.stringify(model));
 	}
 
 	function updateItem(sheetIndex, listIndex, itemIndex, newItem) {
 		var model = JSON.parse(localStorage.getItem('cheatsheeter'));
-		model[sheetIndex]['lists'][listIndex]['items'][itemIndex] = newItem;
+		model['sheets'][sheetIndex]['lists'][listIndex]['items'][itemIndex] = newItem;
 		localStorage.setItem('cheatsheeter', JSON.stringify(model));
 	}	
 
@@ -218,21 +221,18 @@
 
 	function render() {
 		var root = document.getElementById("sheets")
-		var sheets = JSON.parse(localStorage.getItem('cheatsheeter'))
-		m.render(root, view(currentSheetIndex, sheets))		
+		var model = JSON.parse(localStorage.getItem('cheatsheeter'))
+		m.render(root, view(model['currentSheetIndex'], model['sheets']))		
 	}
 
 	function setActiveSheet(sheetIndex) {
-		currentSheetIndex = sheetIndex
-		render()
+		var model = JSON.parse(localStorage.getItem('cheatsheeter'));
+		model['currentSheetIndex'] = sheetIndex;
+		localStorage.setItem('cheatsheeter', JSON.stringify(model));
+		render();
 	}
-	
-	var currentSheetIndex = 0
 
-	var sheets = JSON.parse(localStorage.getItem('cheatsheeter'))
-	
-	var root = document.getElementById("sheets")
-	m.render(root, view(0, sheets))
+	render()
 
 </script>
 
