@@ -1,0 +1,183 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <title>Toplist</title>
+	<script src="mithril.js"></script>
+	<link rel="stylesheet" type="text/css" href="app.css">
+	<link href="https://fonts.googleapis.com/css?family=Roboto:100,300,400,500,700" rel="stylesheet">
+</head>
+
+<body>
+	<div id='container'>
+		<div id="header">
+			<div class="title">Toplist</div>
+			<div class="item">a space for 18 important things</div>
+			<div class="item small">
+				made by <a target="_blank" href="https://twitter.com/dela3499">@dela3499</a> 
+				/ fork on <a target="_blank" href="https://github.com/dela3499/toplist">GitHub</a></div>
+		</div>
+		<div id="lists">
+		</div>	
+	</div>
+	<div id="llama-toggle" onclick="toggleLlama()">
+	</div>
+</body>
+
+<script>
+
+	function toggleLlama() {
+		var body = document.getElementsByTagName("BODY")[0];
+
+		if (body.classList.contains('llama')){
+			body.classList.remove('llama')
+		} else {
+			body.classList.add('llama')
+		}
+		
+	}
+
+	// localStorage.clear('toplist')
+
+	// Initialize localStorage
+	var defaultModel = [
+		{
+			"title": "type something here...",
+			"items": [
+				"... and here",
+				"         ... or here",
+				"               ... maybe here"
+			]
+		},
+		{
+			"title": "How's it work?",
+			"items": [
+				"click text to edit",
+				"data only saved locally (don't clear localStorage!)",
+				"doesn't sync with server or other devices"
+			]
+		},
+		{
+			"title": "",
+			"items": [
+				"",
+				"",
+				""
+			]
+		},
+		{
+			"title": "Why?",
+			"items": [
+				"todo lists & evernote just grow",
+				"until you lose track of the important things",
+				"here, there's only space for the important"
+			]
+		},
+		{
+			"title": "",
+			"items": [
+				"",
+				"",
+				""
+			]
+		},
+		{
+			"title": "Stats",
+			"items": [
+				"6 lists",
+				"3 items each",
+				""
+			]
+		}
+	]
+
+	var local = localStorage.getItem('toplist')
+
+	if (!local) {
+		console.log("just set default");
+		localStorage.setItem('toplist', JSON.stringify(defaultModel));
+	}
+	
+	// Initialize UI
+
+	function pick(items){
+		var item = items[Math.floor(Math.random()*items.length)];
+		return item
+	}
+
+
+	function updateTitle(listIndex, newTitle) {
+		var localLists = JSON.parse(localStorage.getItem('toplist'));
+		localLists[listIndex]['title'] = newTitle;
+		localStorage.setItem('toplist', JSON.stringify(localLists));
+	}
+
+	function updateItem(listIndex, itemIndex, newItem) {
+		var localLists = JSON.parse(localStorage.getItem('toplist'));
+		localLists[listIndex]['items'][itemIndex] = newItem;
+		localStorage.setItem('toplist', JSON.stringify(localLists));
+	}	
+
+	function viewItem(listIndex, itemIndex, text) {
+		var update = function (input) { updateItem(listIndex, itemIndex,input.target.value) }
+		placeholder = pick(["obtain llama genome", "study llama behavior", "find 3 books on llamas", "find 3 books written by llamas", "read to a llama", "visit llama college", "get master's degree in llamaculture"])
+		return m('div', {class: "item"}, 
+				m('input', {value: text, oninput: update, placeholder: "___________________"})
+			)
+	}
+
+	function viewItems(listIndex, items) {
+		return m('div', {class: "items"}, [
+			viewItem(listIndex, 0, items[0]),
+			viewItem(listIndex, 1, items[1]),
+			viewItem(listIndex, 2, items[2])
+			]
+		)
+	}
+
+	function viewTitle(listIndex, text) {
+		var update = function (input) { updateTitle(listIndex,input.target.value) }
+		var placeholder = pick(["Llama genome project", "Llama book", "Llama lifestyle design"])
+		return m('div', {class: "title"}, 
+				m('input', {value: text, oninput: update, placeholder: "_________________"})
+			)
+	}
+
+	function viewList(listIndex, list) {
+		return m('div', {class: "list"}, 
+				[ viewTitle(listIndex, list['title']),
+				  viewItems(listIndex, list['items'])
+				])
+	}
+
+	function imap(f, xs) {
+		ys = []
+		for (i = 0; i < xs.length; i++) { 
+		    ys[i] = f(i, xs[i])
+		}
+		return ys
+	}	
+
+	function map2(f, xs, ys) {
+		zs = []
+		for (i = 0; i < xs.length; i++) { 
+		    zs[i] = f(xs[i], ys[i])
+		}
+		return zs
+	}		
+
+	function view(lists) {
+		return m("div", [
+			m('div', {class: "column"}, map2(viewList, [0,1,2], lists.slice(0,3))),
+			m('div', {class: "column"}, map2(viewList, [3,4,5], lists.slice(3,6)))
+			]
+			)
+	}
+
+	var lists = JSON.parse(localStorage.getItem('toplist'))
+	
+	var root = document.getElementById("lists")
+	m.render(root, view(lists))
+
+</script>
+
+</html>
