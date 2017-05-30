@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <title>Toplist</title>
+    <title>Cheatsheeter - compress for success</title>
 	<script src="mithril.js"></script>
 	<link rel="stylesheet" type="text/css" href="app.css">
 	<link href="https://fonts.googleapis.com/css?family=Roboto:100,300,400,500,700" rel="stylesheet">
@@ -10,142 +10,158 @@
 <body>
 	<div id='container'>
 		<div id="header">
-			<div class="title">Toplist</div>
-			<div class="item">a space for 18 important things</div>
+			<div class="title">Cheatsheeter</div>
+			<div class="item">compress for success</div>
 			<div class="item small">
 				made by <a target="_blank" href="https://twitter.com/dela3499">@dela3499</a> 
-				/ fork on <a target="_blank" href="https://github.com/dela3499/toplist">GitHub</a></div>
+				/ fork on <a target="_blank" href="https://github.com/dela3499/cheatsheeter">GitHub</a></div>
 		</div>
-		<div id="lists">
+		<div id="sheets">
 		</div>	
-	</div>
-	<div id="llama-toggle" onclick="toggleLlama()">
 	</div>
 </body>
 
 <script>
 
-	function toggleLlama() {
-		var body = document.getElementsByTagName("BODY")[0];
-
-		if (body.classList.contains('llama')){
-			body.classList.remove('llama')
-		} else {
-			body.classList.add('llama')
-		}
-		
-	}
-
-	// localStorage.clear('toplist')
+	// localStorage.clear('cheatsheeter')
 
 	// Initialize localStorage
-	var defaultModel = [
-		{
-			"title": "type something here...",
-			"items": [
-				"... and here",
-				"         ... or here",
-				"               ... maybe here"
-			]
-		},
-		{
-			"title": "How's it work?",
-			"items": [
-				"click text to edit",
-				"data only saved locally (don't clear localStorage!)",
-				"doesn't sync with server or other devices"
-			]
-		},
-		{
-			"title": "",
-			"items": [
-				"",
-				"",
-				""
-			]
-		},
-		{
-			"title": "Why?",
-			"items": [
-				"todo lists & evernote just grow",
-				"until you lose track of the important things",
-				"here, there's only space for the important"
-			]
-		},
-		{
-			"title": "",
-			"items": [
-				"",
-				"",
-				""
-			]
-		},
-		{
-			"title": "Stats",
-			"items": [
-				"6 lists",
-				"3 items each",
-				""
-			]
-		}
-	]
 
-	var local = localStorage.getItem('toplist')
+	var initModel = []
+
+	for (i = 0; i < 5; i++) { 
+		var blankLists = []
+
+		for (j = 0; j < 6; j++) { 
+			blankLists[j] = {
+				"title": "",
+				"items": ["","",""]
+			}
+		}
+
+		initModel[i] = {
+			"title": "Sheet #" + (i + 1).toString(),
+			"lists": blankLists
+ 	   	}
+	}
+
+	initModel[0] = {
+		"title": "Welcome!",
+		"lists": 
+			[
+				{
+					"title": "type something here...",
+					"items": [
+						"... and here",
+						"         ... or here",
+						"               ... maybe here"
+					]
+				},
+				{
+					"title": "How's it work?",
+					"items": [
+						"click text to edit",
+						"data only saved locally (don't clear localStorage!)",
+						"doesn't sync with server or other devices"
+					]
+				},
+				{
+					"title": "",
+					"items": [
+						"",
+						"",
+						""
+					]
+				},
+				{
+					"title": "Why?",
+					"items": [
+						"todo lists & evernote just grow",
+						"until you lose track of the important things",
+						"here, there's only space for the important"
+					]
+				},
+				{
+					"title": "Stats",
+					"items": [
+						"5 cheatsheets",
+						"6 lists each",
+						"3 items per list"
+					]
+				},
+				{
+					"title": "The philosophy of cheatsheets",
+					"items": [
+						"Some ideas are worth referencing often",
+						"Like quotes, principles, or techniques",
+						"Be able to review everything in seconds"
+					]
+				}
+			]		
+	}
+
+	var local = localStorage.getItem('cheatsheeter')
 
 	if (!local) {
 		console.log("just set default");
-		localStorage.setItem('toplist', JSON.stringify(defaultModel));
+		localStorage.setItem('cheatsheeter', JSON.stringify(initModel));
 	}
 	
 	// Initialize UI
 
-	function pick(items){
-		var item = items[Math.floor(Math.random()*items.length)];
-		return item
+	function updateSheetTitle(sheetIndex, newTitle) {
+		var model = JSON.parse(localStorage.getItem('cheatsheeter'));
+		model[sheetIndex]['title'] = newTitle;
+		localStorage.setItem('cheatsheeter', JSON.stringify(model));
+		render();
 	}
 
-
-	function updateTitle(listIndex, newTitle) {
-		var localLists = JSON.parse(localStorage.getItem('toplist'));
-		localLists[listIndex]['title'] = newTitle;
-		localStorage.setItem('toplist', JSON.stringify(localLists));
+	function updateListTitle(sheetIndex, listIndex, newTitle) {
+		var model = JSON.parse(localStorage.getItem('cheatsheeter'));
+		model[sheetIndex]['lists'][listIndex]['title'] = newTitle;
+		localStorage.setItem('cheatsheeter', JSON.stringify(model));
 	}
 
-	function updateItem(listIndex, itemIndex, newItem) {
-		var localLists = JSON.parse(localStorage.getItem('toplist'));
-		localLists[listIndex]['items'][itemIndex] = newItem;
-		localStorage.setItem('toplist', JSON.stringify(localLists));
+	function updateItem(sheetIndex, listIndex, itemIndex, newItem) {
+		var model = JSON.parse(localStorage.getItem('cheatsheeter'));
+		model[sheetIndex]['lists'][listIndex]['items'][itemIndex] = newItem;
+		localStorage.setItem('cheatsheeter', JSON.stringify(model));
 	}	
 
-	function viewItem(listIndex, itemIndex, text) {
-		var update = function (input) { updateItem(listIndex, itemIndex,input.target.value) }
-		placeholder = pick(["obtain llama genome", "study llama behavior", "find 3 books on llamas", "find 3 books written by llamas", "read to a llama", "visit llama college", "get master's degree in llamaculture"])
+	function viewItem(sheetIndex, listIndex, itemIndex, text) {
+		var update = function (input) { updateItem(sheetIndex, listIndex, itemIndex,input.target.value) }
 		return m('div', {class: "item"}, 
 				m('input', {value: text, oninput: update, placeholder: "___________________"})
 			)
 	}
 
-	function viewItems(listIndex, items) {
+	function viewItems(sheetIndex, listIndex, items) {
 		return m('div', {class: "items"}, [
-			viewItem(listIndex, 0, items[0]),
-			viewItem(listIndex, 1, items[1]),
-			viewItem(listIndex, 2, items[2])
+			viewItem(sheetIndex, listIndex, 0, items[0]),
+			viewItem(sheetIndex, listIndex, 1, items[1]),
+			viewItem(sheetIndex, listIndex, 2, items[2])
 			]
 		)
 	}
 
-	function viewTitle(listIndex, text) {
-		var update = function (input) { updateTitle(listIndex,input.target.value) }
-		var placeholder = pick(["Llama genome project", "Llama book", "Llama lifestyle design"])
+	function viewListTitle(sheetIndex, listIndex, text) {
+		var update = function (input) { updateListTitle(sheetIndex, listIndex,input.target.value) }
 		return m('div', {class: "title"}, 
 				m('input', {value: text, oninput: update, placeholder: "_________________"})
 			)
 	}
 
-	function viewList(listIndex, list) {
+	function viewSheetTitle(sheetIndex, text) {
+		var update = function (input) { updateSheetTitle(sheetIndex, input.target.value) }
+		return m('div', {class: "sheet-title"}, 
+				m('input', {value: text, oninput: update, placeholder: "_________________"})
+			)
+	}	
+
+	function viewList(sheetIndex, listIndex, list) {
 		return m('div', {class: "list"}, 
-				[ viewTitle(listIndex, list['title']),
-				  viewItems(listIndex, list['items'])
+				[ viewListTitle(sheetIndex, listIndex, list['title']),
+				  viewItems(sheetIndex, listIndex, list['items'])
 				])
 	}
 
@@ -163,20 +179,60 @@
 		    zs[i] = f(xs[i], ys[i])
 		}
 		return zs
-	}		
+	}
 
-	function view(lists) {
-		return m("div", [
-			m('div', {class: "column"}, map2(viewList, [0,1,2], lists.slice(0,3))),
-			m('div', {class: "column"}, map2(viewList, [3,4,5], lists.slice(3,6)))
-			]
+	function map3(f, xs, ys, zs) {
+		mylist = []
+		for (i = 0; i < xs.length; i++) { 
+		    mylist[i] = f(xs[i], ys[i], zs[i])
+		}
+		return mylist
+	}	
+
+	function viewSheet(sheetIndex, sheet) {
+		// kind of hacky to use map3 here and pass sheetIndex as list
+		return m("div", {class: "sheet"}, [
+				viewSheetTitle(sheetIndex, sheet['title']),
+				m('div', {class: "column"}, map3(viewList, [sheetIndex, sheetIndex, sheetIndex], [0,1,2], sheet['lists'].slice(0,3))),
+				m('div', {class: "column"}, map3(viewList, [sheetIndex, sheetIndex, sheetIndex], [3,4,5], sheet['lists'].slice(3,6)))
+				]
 			)
 	}
 
-	var lists = JSON.parse(localStorage.getItem('toplist'))
+	function viewTab(sheetIndex, text) {
+		var update = function () { setActiveSheet(sheetIndex) }
+		return m('div', {class: "tab", onclick: update}, text)
+	}	
+
+	function viewTabs(titles) {
+		return m("div", {class: "tabs"}, imap(viewTab, titles))
+	}
+
+	function view(currentSheetIndex, sheets) {
+		var sheetTitles = sheets.map(function(sheet) { return sheet['title'] })
+		return m("div", {class: "sheets"}, [
+				viewTabs(sheetTitles),
+				viewSheet(currentSheetIndex, sheets[currentSheetIndex])
+			])
+	}
+
+	function render() {
+		var root = document.getElementById("sheets")
+		var sheets = JSON.parse(localStorage.getItem('cheatsheeter'))
+		m.render(root, view(currentSheetIndex, sheets))		
+	}
+
+	function setActiveSheet(sheetIndex) {
+		currentSheetIndex = sheetIndex
+		render()
+	}
 	
-	var root = document.getElementById("lists")
-	m.render(root, view(lists))
+	var currentSheetIndex = 0
+
+	var sheets = JSON.parse(localStorage.getItem('cheatsheeter'))
+	
+	var root = document.getElementById("sheets")
+	m.render(root, view(0, sheets))
 
 </script>
 
